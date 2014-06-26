@@ -10,12 +10,20 @@ public class VotesReducer extends Reducer<Text, Text, Text, Text>
 	@Override
 	public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
 	{
-		String total = "1";
+		int votosSim, votosNao, naoVotou;
+		votosSim = votosNao = naoVotou = 0;
 		Iterator<Text> it = values.iterator();
+		String temp;
 		while(it.hasNext())
 		{
-			total += it.next().toString();
+			temp = it.next().toString();
+			if(temp.equals("Sim"))
+				votosSim++;
+			else if(temp.equals("Não"))
+				votosNao++;
+			else
+				naoVotou++;
 		}
-		context.write(key, new Text(total));
+		context.write(key, new Text("S" + votosSim + "N" + votosNao + "NV" + naoVotou));
 	}
 }
