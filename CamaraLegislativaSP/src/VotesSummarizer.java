@@ -29,7 +29,7 @@ public class VotesSummarizer extends Configured implements Tool
 
 		job.setMapperClass(VotesMapper.class);
 		job.setReducerClass(VotesReducer.class);
-
+		
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
 
