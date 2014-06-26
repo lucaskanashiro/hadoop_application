@@ -20,8 +20,7 @@ public class VotesMapper extends Mapper<LongWritable, Text, Text, Text>
 		{
 			party = matcherVote.group(1);
 			vote  = matcherVote.group(2);
+			context.write(new Text(party), new Text(vote));
 		}
-				
-		context.write(new Text(party), new Text(vote));
 	}
 }

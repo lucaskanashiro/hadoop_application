@@ -21,7 +21,7 @@ public class VotesReducer extends Reducer<Text, Text, Text, Text>
 				votosSim++;
 			else if(temp.equals("Não"))
 				votosNao++;
-			else
+			else if(temp.equals("Não votou"))
 				naoVotou++;
 		}
 		context.write(key, new Text("S" + votosSim + "N" + votosNao + "NV" + naoVotou));
