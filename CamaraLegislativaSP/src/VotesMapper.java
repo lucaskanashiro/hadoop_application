@@ -13,20 +13,15 @@ public class VotesMapper extends Mapper<LongWritable, Text, Text, Text>
 	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
 	{
 		String line = value.toString(), party = "", vote = "";
-		
-		Pattern patternParty = Pattern.compile("Partido=\"([A-Za-z]{2,})\"");
-		Pattern patternVote = Pattern.compile("Voto=\"(Sim|Não|Não votou)\"");
-		
-		Matcher matcherParty = patternParty.matcher(line);
-		
-		if(matcherParty.find())
-			party = matcherParty.group(1);
-			
+		Pattern patternVote = Pattern.compile("Partido=\"([A-Za-z]{2,})\"[^>]+Voto=\"(Sim|Não|Não votou)\"");
 		Matcher matcherVote = patternVote.matcher(line);
 		
 		if(matcherVote.find())
-			vote = matcherVote.group(1);
-		
+		{
+			party = matcherVote.group(1);
+			vote  = matcherVote.group(2);
+		}
+				
 		context.write(new Text(party), new Text(vote));
 	}
 }
