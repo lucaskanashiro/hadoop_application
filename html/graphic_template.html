@@ -30,6 +30,50 @@
 		h4 p {
 			font-size: 13px;
 		}
+		#filter {
+			float: left;
+			display: inline;
+			position: absolute;
+			width: 110px;
+			height: 50px;
+			font-size: 30px;
+			margin-left: 30px;
+			margin-top: 30px;
+		}
+		#tags {
+			float: left;
+			position: absolute;
+			display: inline;
+			margin-top: 570px;
+		}
+
+		#tags div {
+			width: 70px;
+			height: 50px;
+			margin-left: 60px;
+			margin-right: 60px;
+			margin-bottom: 30px;
+			padding-left: 5px;
+			padding-top: 5px;
+			float: left;
+			font-weight: bold;
+			font-family: 'Arial';
+		}
+
+		#tags div#tagRed {
+			background-color: rgba(255,80,80,0.7);
+			border: 2px solid #888;
+		}
+
+		#tags div#tagGreen {
+			background-color: rgba(51,255,50,0.4);
+			border: 2px solid #888;
+		}
+
+		#tags div#tagBlue {
+			background-color: rgba(51,87,250,0.65);
+			border: 2px solid #888;
+		}
 
 	</style>
 </head>
@@ -37,6 +81,25 @@
 <body>
 	<div id="graphic">
 		<div class="canvasWrapper">
+			<select id="filter">
+				<option value="todos">Todos</option>
+				<option value="2010">2010</option>
+				<option value="2011">2011</option>
+				<option value="2012">2012</option>
+				<option value="2013">2013</option>
+				<option value="2014">2014</option>
+			</select>
+			<div id="tags">
+				<div>
+					<div id="tagRed">Votos Sim</div>
+				</div>
+				<div>
+					<div id="tagGreen">Votos Não</div>
+				</div>
+				<div>
+					<div id="tagBlue">Não Votaram</div>
+				</div>
+			</div>
 			<canvas id="radarChart" width="700" height="600" style="width: 700px; height: 600px;"></canvas>
 		</div>
 		<div id="description">
@@ -71,6 +134,14 @@
 	</div>
 	<script type="text/javascript">
 		// ******** Begin Graphic programming ********
+		
+		// Add filter function
+		combo = document.getElementById('filter');
+		combo.value = window.location.search.substr(-4);
+		combo.onchange = function filter()
+		{
+			window.location = 'graphic.php?year=' + this.value;
+		}
 
 		// partido: [sim, nao, naoVotou] => OBS* os valores representam porcentagens
 		var parties = {
