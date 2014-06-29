@@ -2,6 +2,7 @@ import subprocess
 import os
 import re
 import sys
+import time
 
 def compile():
 	subprocess.call("git pull", shell=True)
@@ -44,22 +45,24 @@ def analyze():
 		template = content_file.read()
 
 	template = template.replace('%dataParties%', str(html_content).replace("'", ''))
-
-	html_file = open("/var/www/graphic_data.html", 'w')
-	html_file.write(template)
-	html_file.close()
+	output = open('graphic_data.html', 'w+')
+	output.write(template)
+	output.close()
 
 def run():
 	compile()
 	hadoop_application()
 	analyze()
 
-year = int(sys.argv[1])
+year = 0
+if len(sys.argv) == 2:
+	year = int(sys.argv[1])
+
 available = [2010, 2011, 2012, 2013, 2014]
-print year
 
 if year in available:
-	subprocess.call("cp input/cmsp" + str(year) + ".xml ../input", shell=True)	
+	cmd = "cp input/cmsp" + str(year) + ".xml ../input"
+	subprocess.call(cmd, shell=True)	
 else:
 	subprocess.call("cp input/*.xml ../input/", shell=True)
 run()
