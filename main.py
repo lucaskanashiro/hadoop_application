@@ -22,9 +22,39 @@ def analyze():
 	with open('../output/part-r-00000', 'r') as content_file:
 	    data = content_file.read().replace("\t", " ")
 	data = data.split("\n")
-	for vote in data:
-		print vote
-	#print data
+
+  result = {}
+
+  for party in data:
+      data_votes = ""
+      data_votes = party.split("\t")
+
+      yes_votes = int(data_votes[1])
+      no_votes = int(data_votes[2])
+      without_votes = int(data_votes[3])
+
+      total_votes = yes_votes + no_votes + without_votes
+
+      percent_yes = (yes_votes / total_votes) * 100
+      percent_no = (no_votes / total_votes) * 100
+      percent_without = (without_votes / total_votes) * 100
+
+      result[data_votes[0]] = [percent_yes, percent_no, percent_without]
+
+  html_content = ""
+	with open('html/graphic_template.html', 'r') as content_file:
+      html_content = content_file
+
+  matches = re.match("([\w]+): %s%", html_content)
+
+  for match in matches:
+      replacement = match.sub("%s%", result[match.group(1)])
+      html_content = html_content.replace(match.group(), replacement)
+
+  html_file = open("/var/www/graphic_data.html", 'w')
+  html_file.write(html_content)
+
+
 def run():
 	#compile()
 	#hadoop_application()
