@@ -23,7 +23,7 @@ def analyze():
 		data = content_file.read().replace("\t", " ")
 	data = data.split("\n")
 	data = data[:-1]
-	result = {}
+	html_content = ""
 	for party in data:
 		data_votes = party.split(" ")
 		yes_votes = float(data_votes[1])
@@ -36,20 +36,17 @@ def analyze():
 		percent_no = "%.2f" % (no_votes*100 / total_votes)
 		percent_without = "%.2f" % (without_votes*100 / total_votes)
 
-		result[data_votes[0]] = [percent_yes, percent_no, percent_without]
+		html_content = html_content + data_votes[0] + ': [' + percent_yes + ', ' + percent_no + ', ' + percent_without + "],\n" 
 
-	html_content = ""
+	template = ''
 	with open('html/graphic_template.html', 'r') as content_file:
-		html_content = content_file.read()
-	pattern = re.compile(ur'([\w]+): \[(%s%)\]')	
-	matches = re.findall(pattern, html_content)
-	for grp1, grp2 in matches:
-		html_content = html_content.replace(grp1 + ": [" + grp2 + "]", grp1 + ": " + str(result[grp1]).replace("'", ''))
+		template = content_file.read()
+
+	template = template.replace('%dataParties%', str(html_content).replace("'", ''))
 
 	html_file = open("/var/www/graphic_data.html", 'w')
-	html_file.write(html_content)
+	html_file.write(template)
 	html_file.close()
-
 
 def run():
 	compile()
