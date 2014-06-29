@@ -20,44 +20,40 @@ def hadoop_application():
 def analyze():
 	data = ""
 	with open('../output/part-r-00000', 'r') as content_file:
-	    data = content_file.read().replace("\t", " ")
+		data = content_file.read().replace("\t", " ")
 	data = data.split("\n")
+	data = data[:-1]
+	result = {}
+	for party in data:
+		data_votes = party.split(" ")
+		yes_votes = float(data_votes[1])
+		no_votes = float(data_votes[2])
+		without_votes = float(data_votes[3])
 
-  result = {}
+		total_votes = yes_votes + no_votes + without_votes
 
-  for party in data:
-      data_votes = ""
-      data_votes = party.split("\t")
+		percent_yes = "%.2f" % (yes_votes*100 / total_votes)
+		percent_no = "%.2f" % (no_votes*100 / total_votes)
+		percent_without = "%.2f" % (without_votes*100 / total_votes)
 
-      yes_votes = int(data_votes[1])
-      no_votes = int(data_votes[2])
-      without_votes = int(data_votes[3])
+		result[data_votes[0]] = [percent_yes, percent_no, percent_without]
 
-      total_votes = yes_votes + no_votes + without_votes
-
-      percent_yes = (yes_votes / total_votes) * 100
-      percent_no = (no_votes / total_votes) * 100
-      percent_without = (without_votes / total_votes) * 100
-
-      result[data_votes[0]] = [percent_yes, percent_no, percent_without]
-
-  html_content = ""
+	html_content = ""
 	with open('html/graphic_template.html', 'r') as content_file:
-      html_content = content_file
+		html_content = content_file.read()
+	pattern = re.compile(ur'([\w]+): \[(%s%)\]')	
+	matches = re.findall(pattern, html_content)
+	for grp1, grp2 in matches:
+		html_content = html_content.replace(grp1 + ": [" + grp2 + "]", grp1 + ": " + str(result[grp1]).replace("'", ''))
 
-  matches = re.match("([\w]+): %s%", html_content)
-
-  for match in matches:
-      replacement = match.sub("%s%", result[match.group(1)])
-      html_content = html_content.replace(match.group(), replacement)
-
-  html_file = open("/var/www/graphic_data.html", 'w')
-  html_file.write(html_content)
+	html_file = open("/var/www/graphic_data.html", 'w')
+	html_file.write(html_content)
+	html_file.close()
 
 
 def run():
-	#compile()
-	#hadoop_application()
+	compile()
+	hadoop_application()
 	analyze()
 
 run()
