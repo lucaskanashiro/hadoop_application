@@ -1,6 +1,7 @@
 import subprocess
 import os
 import re
+import sys
 
 def compile():
 	subprocess.call("git pull", shell=True)
@@ -53,5 +54,13 @@ def run():
 	hadoop_application()
 	analyze()
 
-run()
+year = int(sys.argv[1])
+available = [2010, 2011, 2012, 2013, 2014]
+print year
 
+if year in available:
+	subprocess.call("cp input/cmsp" + str(year) + ".xml ../input", shell=True)	
+else:
+	subprocess.call("cp input/*.xml ../input/", shell=True)
+run()
+subprocess.call("rm ../input/*.xml", shell=True)
