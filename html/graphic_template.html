@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Graphic for Similarity Votes Between Politic Parties</title>
+	<script src="Chart.js"></script>
+	<link rel="stylesheet" href="styles.css" type="text/css"/>
+	<link rel="stylesheet" href="table.css" type="text/css"/>
+	<style type="text/css">
+		#description {
+			width: 580px;
+			height: 600px;
+			float: right;
+			margin-right: 40px;
+			overflow: auto;
+			padding: 10px;
+		}
+
+		#radarChart {
+			float: left;
+			border-right: 1px solid #999; 
+		}
+
+		h4 {
+			color: #444;
+			text-align: justify;
+			line-height: 20px;
+		}
+
+		h4 p {
+			font-size: 13px;
+		}
+
+	</style>
+</head>
+
+<body>
+	<div id="graphic">
+		<div class="canvasWrapper">
+			<canvas id="radarChart" width="700" height="600" style="width: 700px; height: 600px;"></canvas>
+		</div>
+		<div id="description">
+			<h1>Similaridade de Votos</h1>
+			<h4>
+				<p>
+					O Programa de Dados Abertos do Parlamento foi criado pelo Ato da Mesa nº 1156/2011, com a finalidade de disponibilizar bases de dados e de informações não sigilosas, de forma eletrônica e em formato aberto, em conformidade com os princípios da administração pública e com observância de recomendações aceitas internacionalmente, como as emitidas pela Open Knowledge Foundation e pelo Consórcio W3C Internacional.
+				</p>
+				<br \>
+				<p>
+					Entende-se o conceito de dados abertos como dados que qualquer cidadão possa utilizar, reutilizar e distribuir livremente, ressalvando-se, no máximo, a exigência de atribuição e compartilhamento.
+				</p>
+				<br \>
+				<p>
+					Para o desenvolvimento dessa aplicação foram utilizados os dados abertos das votações da Câmara de São Paulo dos anos de 2010 a 2014. O gráfico ilustra a similaridade entre os votos dos partidos por meio da análise da porcentagem de votos "Sim", "Não" e "Não Votou". É importante ressaltar que a porcentagem foi escolhida para considerar uma igual proporção de representatividade de cada partido na votação, assim, se um partido tiver mais votantes que outro isso não influenciará no resultado final.
+				</p>
+			</h4>
+			<div>
+				<h2>Dados</h2>
+				<div class="CSSTableGenerator">
+					<table id="dataTable">
+						<tr>
+							<td>Partido</td>
+							<td>Votos Sim</td>
+							<td>Votos Não</td>
+							<td>Não Houve Voto</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		// ******** Begin Graphic programming ********
+
+		// partido: [sim, nao, naoVotou] => OBS* os valores representam porcentagens
+		var parties = {
+			DEM: [%s%], 
+			PCdoB: [%s%], 
+			PDT: [%s%], 
+			PHS: [%s%], 
+			PMDB: [%s%], 
+			PP: [%s%], 
+			PPS: [%s%], 
+			PR: [%s%], 
+			PRB: [%s%], 
+			PROS: [%s%], 
+			PSB: [%s%], 
+			PSC: [%s%], 
+			PSD: [%s%], 
+			PSDB: [%s%], 
+			PSOL: [%s%], 
+			PT: [%s%], 
+			PTB: [%s%], 
+			PV: [%s%],
+		};
+
+		// Arrays to store data
+		var yesVotes 	= new Array();
+		var noVotes 	= new Array();
+		var didntVotes 	= new Array();
+		var partyLabels = new Array();
+
+		// Basic structure to build a table
+		dataTable = document.getElementById('dataTable');
+
+		// Run through parties
+		for (party in parties) {
+
+			// Build Value arrays for the chart
+			partyLabels.push(party);
+			yesVotes.push(parties[party][0]);
+			noVotes.push(parties[party][1]);
+			didntVotes.push(parties[party][2]);
+
+			// Build data table
+			newRow = document.createElement('tr');
+			column1 = document.createElement('td');
+			column2 = document.createElement('td');
+			column3 = document.createElement('td');
+			column4 = document.createElement('td');
+
+			column1.appendChild(document.createTextNode(party));
+			column2.appendChild(document.createTextNode(parties[party][0]));
+			column3.appendChild(document.createTextNode(parties[party][1]));
+			column4.appendChild(document.createTextNode(parties[party][2]));
+
+			newRow.appendChild(column1);
+			newRow.appendChild(column2);
+			newRow.appendChild(column3);
+			newRow.appendChild(column4);
+			dataTable.appendChild(newRow);
+		}
+
+		// Build chart data
+		var data = {
+			labels : partyLabels,
+			datasets : [
+				{
+					fillColor : "rgba(255,80,80,0.7)",
+					strokeColor : "rgba(120,120,120,1)",
+					pointColor : "rgba(220,220,220,1)",
+					pointStrokeColor : "#fff",
+					data : yesVotes
+				},
+				{
+					fillColor : "rgba(51,255,50,0.4)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					data : noVotes
+				}
+				,
+				{
+					fillColor : "rgba(51,87,250,0.65)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					data : didntVotes
+				}
+			]
+		};
+
+		// Options
+		var options = {
+				angleLineWidth : 1,
+				pointLabelFontStyle : "bold",
+				pointLabelFontSize : 16,
+				scaleGridLineWidth : 3,	
+		};
+
+		// Get the context of the canvas element we want to select
+		var ctx = document.getElementById("radarChart").getContext("2d");
+		new Chart(ctx).Radar(data, options);
+	</script>
+</body>
+</html>
