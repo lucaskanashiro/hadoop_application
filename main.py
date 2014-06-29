@@ -19,13 +19,22 @@ def hadoop_application():
 	subprocess.call("bin/hadoop jar camara.jar VotesSummarizer input output", shell=True)
 	os.chdir("hadoop_application")
 
+def write_html(html_content):
+	output = open('graphic_data.html', 'w+')
+	output.write(html_content)
+	output.close()
+    
 def analyze():
 	data = ""
+
+      	#Reading output file
 	with open('../output/part-r-00000', 'r') as content_file:
 		data = content_file.read().replace("\t", " ")
 	data = data.split("\n")
 	data = data[:-1]
 	html_content = ""
+
+      	#Computing votes 
 	for party in data:
 		data_votes = party.split(" ")
 		yes_votes = float(data_votes[1])
@@ -44,10 +53,11 @@ def analyze():
 	with open('html/graphic_template.html', 'r') as content_file:
 		template = content_file.read()
 
+      	#Replace values of percentage in template html
 	template = template.replace('%dataParties%', str(html_content).replace("'", ''))
-	output = open('graphic_data.html', 'w+')
-	output.write(template)
-	output.close()
+
+      	#Writing new html with actual data
+      	write_html(template)
 
 def run():
 	compile()
@@ -55,15 +65,23 @@ def run():
 	analyze()
 
 year = 0
+
+#Receiving argument
 if len(sys.argv) == 2:
 	year = int(sys.argv[1])
 
 available = [2010, 2011, 2012, 2013, 2014]
 
+#Verifying if argument is a available year and copying referent XML to input directory
 if year in available:
 	cmd = "cp input/cmsp" + str(year) + ".xml ../input"
 	subprocess.call(cmd, shell=True)	
 else:
-	subprocess.call("cp input/*.xml ../input/", shell=True)
+	subprocess.call("cp input/*.xml ../input", shell=True)
+
+#Run all script
 run()
+
+#Remove XML in input directory
 subprocess.call("rm ../input/*.xml", shell=True)
+
